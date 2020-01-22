@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:sih_app/Models/medicine.dart';
-List<Medicine> medicines=[
-  Medicine(name: "Zantac", dosage: "Twice a Day", power: 2),
-  Medicine(name: "Zantac", dosage: "Twice a Day", power: 2),
-  Medicine(name: "Zantac", dosage: "Twice a Day", power: 2),
-  Medicine(name: "Zantac", dosage: "Twice a Day", power: 2),
-];
+import 'package:sih_app/Services/listService.dart';
 class Lists extends StatefulWidget {
   @override
   _ListsState createState() => _ListsState();
 }
 
 class _ListsState extends State<Lists> {
-  @override
   Widget build(BuildContext context) {
     return ListView.separated(
           itemCount: medicines.length,

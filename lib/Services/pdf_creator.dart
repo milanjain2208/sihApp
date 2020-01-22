@@ -68,10 +68,10 @@ Future<String> pdfGenerator(String name,String type,String phoneNo,String addres
                 ]
             ),
       ),
-//      Table.fromTextArray(context: context, data: const <List<String>>[
-//        <String>['Patient Name', 'Age', 'Sex','Ailment'],
-//        <String>['', '', '',''],
-//        ])
+      Table.fromTextArray(context: context, data: const <List<String>>[
+        <String>['Patient Name', 'Age', 'Sex','Ailment'],
+        <String>['', '', '',''],
+        ])
   ]
   )
   );

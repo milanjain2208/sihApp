@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:sih_app/Screens/Home/patient.dart';
 import 'package:sih_app/Screens/Prescription_Template.dart';
+import 'package:sih_app/Screens/add_new_med.dart';
 import 'package:sih_app/Services/auth.dart';
 import 'package:sih_app/Services/pdf_viewer.dart';
+import 'package:speech_recognition/speech_recognition.dart';
 
 import 'lists.dart';
 class Home extends StatefulWidget {
@@ -16,12 +19,52 @@ class _HomeState extends State<Home> {
   void changePage(int p,String tp){
     setState(() {
       page=p;
-      path=tp;
+      if(tp!="null")
+        {
+          path=tp;
+        }
     });
   }
+  SpeechRecognition _speech;
+
+  bool _speechRecognitionAvailable = false;
+  bool _isListening = false;
+
+  String transcription = '';
   @override
+  initState() {
+    super.initState();
+    activateSpeechRecognizer();
+  }
+  void activateSpeechRecognizer() {
+    _speech = new SpeechRecognition();
+    _speech.setAvailabilityHandler(onSpeechAvailability);
+    _speech.setRecognitionStartedHandler(onRecognitionStarted);
+    _speech.setRecognitionResultHandler(onRecognitionResult);
+    _speech.setRecognitionCompleteHandler(onRecognitionComplete);
+    _speech
+        .activate()
+        .then((res) => setState(() {
+          _speechRecognitionAvailable = res;
+          start();
+        }));
+  }
   Widget build(BuildContext context) {
-    return page==1?PrescriptionFormat(changePage: changePage):Scaffold(
+    start();
+    if(transcription=="preview")
+      {
+        page=2;
+      }
+    if(transcription=="patient")
+    {
+        page=3;
+    }
+    if(transcription=="add")
+      {
+        page=4;
+      }
+
+    return page==1?PrescriptionFormat(transcription: transcription ,changePage: changePage):page==2?PdfViewer(path: path,transcription: transcription,changePage: changePage,):page==3?Patient(transcription: transcription ,changePage: changePage):page==4?AddNewMed(transcription: transcription ,changePage: changePage):Scaffold(
       appBar: AppBar(
         title: Text("Home"),
         backgroundColor: Colors.tealAccent,
@@ -40,26 +83,63 @@ class _HomeState extends State<Home> {
         ],
       ),
       body: Lists(),
-      floatingActionButton: Container(
-        width: 100,
-        child: FloatingActionButton(
-          child: Text("Preview",
-            style: TextStyle(
-              color: Colors.black,
-            ),),
-          backgroundColor: Colors.tealAccent,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular((10.0)),
+      floatingActionButton: Stack(
+        children: <Widget>[Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            width: 100,
+            child: FloatingActionButton(
+              child: Text("Preview",
+                style: TextStyle(
+                  color: Colors.black,
+                ),),
+              backgroundColor: Colors.tealAccent,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular((10.0)),
+              ),
+              materialTapTargetSize: MaterialTapTargetSize.padded,
+              onPressed: (){
+                     setState(() {
+                       page=2;
+                     });
+              },
+            ),
           ),
-          materialTapTargetSize: MaterialTapTargetSize.padded,
-          onPressed: (){
-            Navigator.push(context,MaterialPageRoute(builder: (context){
-              return PdfViewer(path: path);
-            }));
-          },
         ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: FloatingActionButton(
+              backgroundColor: Colors.blueAccent,
+              child: Icon(Icons.mic),
+              onPressed: (){
+                setState(() {
+                  start();
+                });
+              },
+            ),
+          )
+      ]
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
+  void start() => _speech
+      .listen(locale: 'en_IN');
+
+  void cancel() =>
+      _speech.cancel().then((result) => setState(() => _isListening = result));
+
+  void stop() => _speech.stop().then((result) {
+    setState(() => _isListening = result);
+  });
+
+  void onSpeechAvailability(bool result) =>
+      setState(() => _speechRecognitionAvailable = result);
+  void onRecognitionStarted() => setState(() => _isListening = true);
+
+  void onRecognitionResult(String text) => setState(() {
+    transcription = text;
+  }
+  );
+
+  void onRecognitionComplete() => setState(() => _isListening = false);
 }
