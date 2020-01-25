@@ -54,7 +54,7 @@ class _AddNewMedState extends State<AddNewMed> {
           int power=int.parse(text2.text);
           String dosage=text3.text;
           medicines.add(Medicine(name: name,dosage: dosage,power: power));
-          widget.changePage(0,"null");
+          widget.changePage(0);
         }
     }
 
@@ -130,7 +130,7 @@ class _AddNewMedState extends State<AddNewMed> {
           int power=int.parse(text2.text);
           String dosage=text3.text;
           medicines.add(Medicine(name: name,dosage: dosage,power: power));
-            widget.changePage(0,"null");
+            widget.changePage(0);
         },
       ),
     ),

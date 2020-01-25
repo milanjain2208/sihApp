@@ -33,6 +33,7 @@ class AuthService{
       return null;
     }
   }
+
   //register
   Future register(String email,String password) async {
     try {

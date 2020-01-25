@@ -3,7 +3,9 @@ import 'package:sih_app/Screens/Home/patient.dart';
 import 'package:sih_app/Screens/Prescription_Template.dart';
 import 'package:sih_app/Screens/add_new_med.dart';
 import 'package:sih_app/Services/auth.dart';
+import 'package:sih_app/Services/pdf_creator.dart';
 import 'package:sih_app/Services/pdf_viewer.dart';
+import 'package:sih_app/Shared/Loading.dart';
 import 'package:speech_recognition/speech_recognition.dart';
 
 import 'lists.dart';
@@ -16,13 +18,9 @@ class _HomeState extends State<Home> {
   AuthService _auth=AuthService();
   String path;
   int page=1;
-  void changePage(int p,String tp){
+  void changePage(int p){
     setState(() {
       page=p;
-      if(tp!="null")
-        {
-          path=tp;
-        }
     });
   }
   SpeechRecognition _speech;
@@ -53,7 +51,11 @@ class _HomeState extends State<Home> {
     start();
     if(transcription=="preview")
       {
-        page=2;
+        page=5;
+        pdfGenerator().then((pt){
+          page=2;
+          path=pt;
+        });
       }
     if(transcription=="patient")
     {
@@ -63,23 +65,29 @@ class _HomeState extends State<Home> {
       {
         page=4;
       }
-
-    return page==1?PrescriptionFormat(transcription: transcription ,changePage: changePage):page==2?PdfViewer(path: path,transcription: transcription,changePage: changePage,):page==3?Patient(transcription: transcription ,changePage: changePage):page==4?AddNewMed(transcription: transcription ,changePage: changePage):Scaffold(
+    return page==1?PrescriptionFormat(transcription: transcription ,changePage: changePage):page==2?PdfViewer(path: path,transcription: transcription,changePage: changePage,):page==3?Patient(transcription: transcription ,changePage: changePage):page==4?AddNewMed(transcription: transcription ,changePage: changePage):page==5?Loading():Scaffold(
       appBar: AppBar(
-        title: Text("Home"),
+        centerTitle: true,
+        title: Text("Home",
+        style: TextStyle(
+          color: Colors.black
+        ),),
         backgroundColor: Colors.tealAccent,
         actions: <Widget>[
-          FlatButton.icon(onPressed: () async {
+          IconButton(onPressed: () async {
             await _auth.logOut();
           },
-              icon: Icon(Icons.person),
-              label: Text("SignOut")),
-          FlatButton(onPressed: ()  {
+              icon: Icon(Icons.person,
+              color: Colors.black,),
+              ),
+          IconButton(onPressed: ()  {
             setState(() {
-              changePage(1,path);
+              changePage(1);
             });
           },
-              child: Text("Prescription")),
+              icon: Icon(Icons.note,
+              color: Colors.black,),
+          )
         ],
       ),
       body: Lists(),

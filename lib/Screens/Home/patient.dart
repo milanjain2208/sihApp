@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sih_app/Shared/constants.dart';
+import 'package:sih_app/Shared/pdf_Constants.dart';
 class Patient extends StatefulWidget {
   final Function changePage;
   final String transcription;
@@ -56,8 +57,11 @@ class _Patient extends State<Patient> {
       }
       try {
         if (widget.transcription == "done") {
-          Future.delayed(Duration(seconds: 2)).then(
-              widget.changePage(0, "null"));
+          patientName=text1.text;
+          patientAge=text2.text;
+          patientSex=text3.text;
+          patientAilment=text4.text;
+          widget.changePage(0);
         }
       }
       catch(err){
@@ -122,7 +126,11 @@ class _Patient extends State<Patient> {
       ),
     materialTapTargetSize: MaterialTapTargetSize.padded,
         onPressed: () {
-          widget.changePage(0,"null");
+          patientName=text1.text;
+          patientAge=text2.text;
+          patientSex=text3.text;
+          patientAilment=text4.text;
+          widget.changePage(0);
         },
     )
     ),

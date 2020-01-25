@@ -18,7 +18,7 @@ class _PdfViewerState extends State<PdfViewer> {
   Widget build(BuildContext context) {
     try {
       if (widget.transcription == "back") {
-        widget.changePage(0, widget.path);
+        widget.changePage(0);
       }
     }
     catch(err){
@@ -27,8 +27,8 @@ class _PdfViewerState extends State<PdfViewer> {
       if (widget.transcription == "mail" && status==0) {
           final Email email = Email(
             body: 'Prescripion',
-            subject: 'the Email Subject',
-            recipients: ['rohansharmagarwal@gmail.com'],
+            subject: 'Your Medical Prescription',
+            recipients: ['someone@gmail.com'],
             attachmentPath: widget.path,
             isHTML: false,
           );
@@ -42,9 +42,9 @@ class _PdfViewerState extends State<PdfViewer> {
               title: Text("Preview Prescription"),
               backgroundColor: Colors.tealAccent,
               actions: <Widget>[
-              FlatButton.icon(
-                  icon: Icon(Icons.mail),
-                  label: Text("Mail"),
+              IconButton(
+                  icon: Icon(Icons.mail,
+                  color: Colors.black,),
                 onPressed: () async  {
                     print(widget.path);
                  try{

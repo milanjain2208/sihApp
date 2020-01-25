@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sih_app/Services/pdf_creator.dart';
 import 'package:sih_app/Shared/constants.dart';
+import 'package:sih_app/Shared/pdf_Constants.dart';
 class PrescriptionFormat extends StatefulWidget {
   final Function changePage;
   final String transcription;
@@ -51,15 +52,17 @@ class _PrescriptionFormatState extends State<PrescriptionFormat> {
         });
       }
     }
-    if(widget.transcription=="done")
-    {
-      String name=text1.text;
-      String type=text2.text;
-      String phoneNo=text3.text;
-      String address=text4.text;
-      pdfGenerator(name, type, phoneNo, address).then((path){
-        widget.changePage(0,path);
-      });
+    try {
+      if (widget.transcription == "done") {
+        setDocName(text1.text);
+        setDocType(text2.text);
+        setDocPhoneNo(text3.text);
+        setDocAddress(text4.text);
+        widget.changePage(0);
+      }
+    }
+    catch(err){
+      print(err.toString());
     }
     return Scaffold(
       body: Container(
@@ -120,12 +123,11 @@ class _PrescriptionFormatState extends State<PrescriptionFormat> {
     ),
     materialTapTargetSize: MaterialTapTargetSize.padded,
         onPressed: () async {
-          String name=text1.text;
-          String type=text2.text;
-          String phoneNo=text3.text;
-          String address=text4.text;
-          String path=await pdfGenerator(name, type, phoneNo, address);
-          widget.changePage(0,path);
+          setDocName(text1.text);
+          setDocType(text2.text);
+          setDocPhoneNo(text3.text);
+          setDocAddress(text4.text);
+          widget.changePage(0);
         },
       ),
             ),
